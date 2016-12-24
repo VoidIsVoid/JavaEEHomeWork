@@ -2,6 +2,9 @@ package cn.edu.bjtu.weibo.service.impl;
 
 import cn.edu.bjtu.weibo.dao.WeiboDAO;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -23,6 +26,14 @@ public class DeleteWeiboService {
 	 * @return
 	 */
 	boolean deleteWeibo(String userId,String weiboId){
-		return weiboDAO.deleteWeibo(weiboId);
+		String forwordNum = weiboDAO.getForwardNumber(weiboId);
+		Integer num = Integer.parseInt(forwordNum);
+		if(num!=0){
+			List<String> wbs = weiboDAO.getForwardList(weiboId, 0, num);
+			for(String wb:wbs){
+				deleteWeibo(userId, wb);
+			}
+		}
+		return true;
 	}
 }
